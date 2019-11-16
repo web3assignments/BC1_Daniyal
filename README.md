@@ -1,0 +1,2 @@
+# BC1_Daniyal
+THUASMinorBlockchain_20192020B_IT repository for Daniyal
