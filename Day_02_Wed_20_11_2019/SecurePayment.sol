@@ -21,6 +21,27 @@ contract SecurePayment {
   mapping (uint => Transaction) public transactions;
 
   event PayedOut(address a, address b, uint transactionId);
+  
+  function create(address payable _personA, 
+                  address payable _personB, 
+                  address payable _middleMan, 
+                  uint256 _amount, 
+                  string memory _description) public isNotSame(_personA, _personB) returns (uint) {
+
+    Transaction memory transaction = Transaction( 
+                                        Person(_personA, false), 
+                                        Person(_personB, false), 
+                                        Person(_middleMan, false), 
+                                        _amount,
+                                        false,
+                                        false,
+                                        _description);
+
+    totalTransactions++;
+    transactions[totalTransactions] = transaction;
+
+    return totalTransactions;
+  }
 
   modifier isReady(uint transactionId) {
     require(
@@ -34,8 +55,7 @@ contract SecurePayment {
     require(
       transactions[transactionId].payedIn &&
       transactions[transactionId].verifier.walletAddress == msg.sender &&
-      !transactions[transactionId].payedOut
-    );
+      !transactions[transactionId].payedOut);
     _;
   }
 
@@ -43,24 +63,8 @@ contract SecurePayment {
     require(a != b, "Address can't be the same");
     _;
   }
-  
-  function create(address payable _personA, 
-                  address payable _personB, 
-                  address payable _middleMan, 
-                  uint256 _amount, 
-                  string memory _description) public isNotSame(_personA, _personB) returns (uint) {
 
-    Transaction memory transaction = Transaction(Person(_personA, false), Person(_personB, false), Person(_middleMan, false), _amount, false, false, _description);
-
-    totalTransactions++;
-    transactions[totalTransactions] = transaction;
-
-    return totalTransactions;
-  }
-
-  function checkIn(uint transactionId) public returns (bool) {
-    Transaction memory transaction = transactions[transactionId];
-
+ function checkIn(uint transactionId) public returns (bool) {    
     if(transactions[transactionId].personA.walletAddress == msg.sender) {
       transactions[transactionId].personA.verified = true;
       return true;
@@ -78,6 +82,7 @@ contract SecurePayment {
     return false;
   }
 
+
   function payIn(uint transactionId) public payable returns (bool)  {
     if (msg.value >= transactions[transactionId].amount && !transactions[transactionId].payedIn) {
       transactions[transactionId].payedIn = true;
@@ -94,7 +99,7 @@ contract SecurePayment {
     transactions[transactionId].payedOut = true;
     
     emit PayedOut(transactions[transactionId].personA.walletAddress, 
-                  transactions[transactionId].personB.walletAddress, 
+                  transactions[transactionId].personB., 
                   transactionId);
 
     return transactions[transactionId].payedOut;

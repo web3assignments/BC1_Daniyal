@@ -16,7 +16,6 @@ contract SecurePayment {
     string description;
   }
 
-  uint precentage = 10;
   Transaction[] transactions;
   
   function create(address payable _personA, address payable _personB, address payable _middleMan, uint256 _amount, string memory _description) public returns (uint) {
@@ -34,9 +33,7 @@ contract SecurePayment {
     return transactionId;
   }
 
-  function checkIn(uint transactionId) public returns (bool) {
-    Transaction memory transaction = transactions[transactionId];
-
+  function checkIn(uint transactionId) public returns (bool) {    
     if(transactions[transactionId].personA.walletAddress == msg.sender) {
       transactions[transactionId].personA.verified = true;
       return true;
