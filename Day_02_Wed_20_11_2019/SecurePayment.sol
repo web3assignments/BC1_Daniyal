@@ -20,6 +20,7 @@ contract SecurePayment {
   uint totalTransactions;
   mapping (uint => Transaction) public transactions;
 
+  event Created(address a, address b, uint transactionId);
   event PayedOut(address a, address b, uint transactionId);
   
   function create(address payable _personA, 
@@ -40,6 +41,8 @@ contract SecurePayment {
     totalTransactions++;
     transactions[totalTransactions] = transaction;
 
+    
+    emit Created(_personA, _personB, totalTransactions);
     return totalTransactions;
   }
 
@@ -99,7 +102,7 @@ contract SecurePayment {
     transactions[transactionId].payedOut = true;
     
     emit PayedOut(transactions[transactionId].personA.walletAddress, 
-                  transactions[transactionId].personB., 
+                  transactions[transactionId].personB.walletAddress, 
                   transactionId);
 
     return transactions[transactionId].payedOut;

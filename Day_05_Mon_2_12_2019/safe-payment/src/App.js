@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
+import Loader from 'react-loader-spinner'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+
 import Range from 'react-rangeslider';
 import 'react-rangeslider/lib/index.css'
 
@@ -15,7 +18,11 @@ function App() {
   const [addressC, setaddressC] = useState("");
   const [description, setDescription] = useState("");
 
-  let SecurePaymentContract;
+  const [wallet, setWallet] = useState("");
+  const [contract, setContract] = useState({});
+
+  const [isLoading, setLoading] = useState(false);
+
   let web3;
 
   useEffect(() => {
@@ -25,29 +32,32 @@ function App() {
   const init = async () => {
     web3 = new Web3(window.ethereum);
     await window.ethereum.enable();
-
-    SecurePaymentContract = new web3.eth.Contract(contract_abi, "0x0a3c808e444447f6e41074151e4AEb63774D15AB");
     
+    const currentAddress = await web3.eth.getAccounts();
+    setWallet(currentAddress[0]);
+
+    const SecurePaymentContract = new web3.eth.Contract(contract_abi, "0xADA8f07BE1F0186bb9F72876FCd4cd47637f66ad");
+    setContract(SecurePaymentContract);
+
     console.log("Created contract connection");
   }
 
-  const createContract = () => {
+  const createContract = async () => {
+    setLoading(true);
     console.log("Started request");
 
-    web3 = new Web3(window.ethereum);
-    window.ethereum.enable();
-    SecurePaymentContract = new web3.eth.Contract(contract_abi, "0x0a3c808e444447f6e41074151e4AEb63774D15AB");
-
-
-    const response = SecurePaymentContract.methods.create(
+    const response = contract.methods.create(
       addressA,
       addressB,
       addressC,
       amount,
       description
-    ).send({ from: web3.eth.defaultAccount }).catch(e => {console.log(e)});
-
-    console.log("response: " + response)
+    ).send({ from: wallet })
+    .catch(e => {console.log(e)})
+    .then((response) => {
+      console.log("response: " + response)
+      setLoading(false);
+    });
   }
   
   return (
@@ -96,7 +106,16 @@ function App() {
                   <input type="checkbox" className="form-check-input" id="exampleCheck1" />
                   <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
                 </div>
-                <button type="button" onClick={() => createContract()} className="btn btn-primary">Submit</button>
+                { isLoading ?
+                  <Loader
+                    type="ThreeDots"
+                    color="#282c34"
+                    height={100}
+                    width={100}
+                  />
+                  :
+                  <button type="button" onClick={() => createContract()} className="btn btn-primary">Submit</button>
+                }
               </form>
             </div>
           </div>
