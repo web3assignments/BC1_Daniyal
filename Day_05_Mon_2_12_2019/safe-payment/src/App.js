@@ -58,6 +58,8 @@ function App() {
       console.log("response: " + response)
       setLoading(false);
     });
+
+    console.log(response);
   }
   
   return (
