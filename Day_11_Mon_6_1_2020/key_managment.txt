@@ -1,0 +1,7 @@
+
+Since Blockchain and cryptocurrency are getting more accepted and more used. There are coming more questions with it. Like how can i safely store the keys of my wallet?
+
+There are plenty of ways to do so:
+- Paper wallets: Paper wallet is a phsyical paper with the key written on it. One of the advantages is that this paper wallet is not stored on the internet but just a physical paper and the hackers can't access it online. The disadvantage is that everybody has access to it if they get a hand on it.
+- Another way is to use a password manager that will store all the keys and you can access the password manager with a password you can remember.
+- A multi-signature wallet is one of the best ways to store your private keys because your keys would be separated into two parts and stored  2 separate ways.
